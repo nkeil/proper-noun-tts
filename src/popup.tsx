@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import "./style.css";
 
 import copyToClipboard from "copy-to-clipboard";
+import type { APIError } from "openai/error";
 import { BsFillMicFill, BsFillMicMuteFill, BsThreeDots } from "react-icons/bs";
 import { FaCheck, FaRegClipboard } from "react-icons/fa";
 
@@ -11,7 +12,7 @@ import {
   startRecording,
   stopRecording,
 } from "./helpers/audio";
-import { retrieveApiKey } from "./helpers/storage";
+import { retrieveApiKey, storeApiKey } from "./helpers/storage";
 import { transcribeAudio } from "./helpers/transcription";
 
 function Popup() {
@@ -20,7 +21,7 @@ function Popup() {
 
   const [micOn, setMicOn] = useState(false);
   const [isTranscribing, setIsTranscribing] = useState(false);
-  const transcriptionInput = useRef<HTMLInputElement>();
+  const transcriptionInput = useRef<HTMLTextAreaElement>();
   const [hasCopied, setHasCopied] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement>();
@@ -42,10 +43,19 @@ function Popup() {
         setIsTranscribing(true);
         transcribeAudio(blob, apiKey)
           .then((result) => {
-            setIsTranscribing(false);
             transcriptionInput.current.value = result;
           })
-          .catch((e) => console.error(e));
+          .catch((e: APIError) => {
+            console.log(JSON.stringify(e));
+            if (e.code === "invalid_api_key") {
+              storeApiKey("");
+              chrome.runtime.openOptionsPage();
+            }
+            console.error(e);
+          })
+          .finally(() => {
+            setIsTranscribing(false);
+          });
       } catch (error) {
         console.error("Error occurred during transcription:", error);
       }
@@ -68,7 +78,7 @@ function Popup() {
   }, []);
 
   return (
-    <div className="flex flex-col p-10 min-w-[300px] min-h-[400px] justify-between items-center">
+    <div className="flex flex-col p-10 min-w-[300px] min-h-[400px] justify-between gap-5 items-center">
       <h1 className="text-3xl font-rubik-doodle">Awesome TTS</h1>
       <button
         onClick={toggleMic}
@@ -92,10 +102,11 @@ function Popup() {
         </div>
       </button>
       <div className="flex items-center border border-gray-200 px-3 py-2 rounded-lg">
-        <input
+        <textarea
           ref={transcriptionInput}
           className="focus:outline-none"
           onChange={() => setHasCopied(false)}
+          rows={7}
         />
         {hasCopied ? (
           <FaCheck
