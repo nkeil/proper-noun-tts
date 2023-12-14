@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+  font-family: "RubikDoodle";
+  src: url("../assets/RubikDoodle.ttf");
+}

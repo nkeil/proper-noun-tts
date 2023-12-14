@@ -69,7 +69,7 @@ function Popup() {
 
   return (
     <div className="flex flex-col p-10 min-w-[300px] min-h-[400px] justify-between items-center">
-      <h1 className="text-2xl">Awesome TTS</h1>
+      <h1 className="text-3xl font-rubik-doodle">Awesome TTS</h1>
       <button
         onClick={toggleMic}
         className={`rounded-full border-2 h-20 w-20 ${

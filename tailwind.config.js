@@ -4,7 +4,11 @@ module.exports = {
   darkMode: "class",
   content: ["./**/*.tsx"],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        "rubik-doodle": ["RubikDoodle"],
+      },
+    },
   },
   plugins: [],
 };
