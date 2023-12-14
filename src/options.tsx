@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 import "./style.css";
 
-import { getUserMediaPermission } from "~/helpers/audio";
+import { getUserAudioPermission } from "~/helpers/audio";
 import { retrieveApiKey, storeApiKey } from "~/helpers/storage";
 
 function Options() {
@@ -12,7 +12,7 @@ function Options() {
   const apiKeyInput = useRef<HTMLInputElement>();
 
   const refreshMicPermission = async () => {
-    setHasMicPermission(await getUserMediaPermission());
+    setHasMicPermission(await getUserAudioPermission());
   };
 
   const focusApiKey = () => {
