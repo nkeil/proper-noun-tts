@@ -35,6 +35,7 @@ function Options() {
   };
 
   const onAddWord = async (word: string) => {
+    if (dictionary.map((w) => w.text).includes(word)) return;
     const embedding = await getEmbedding(word, apiKey);
     const newDictionary = [...dictionary, { text: word, embedding }];
     setDictionary(newDictionary);
@@ -52,7 +53,8 @@ function Options() {
 
   const onUpdateWord = async (i: number, newWord: string) => {
     if (i < 0 || i >= dictionary.length)
-      throw new Error("Tried to delete a nonexistent entry");
+      throw new Error("Tried to update a nonexistent entry");
+    if (dictionary.map((w) => w.text).includes(newWord)) return;
     const newEmbedding = await getEmbedding(newWord, apiKey);
     const newDictionary = [...dictionary];
     if (newWord) newDictionary[i] = { text: newWord, embedding: newEmbedding };
