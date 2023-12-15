@@ -66,7 +66,7 @@ function Options() {
   return (
     <div className="w-full flex flex-col items-center text-xl gap-8">
       <div className="w-full text-center mt-10 text-4xl font-bold">
-        <h1>Awesome TTS</h1>
+        <h1>Awsm TTS</h1>
       </div>
 
       <div className="flex gap-2">

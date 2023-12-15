@@ -1,6 +1,6 @@
 {
-  "name": "awesome-tts",
-  "displayName": "Awesome tts",
+  "name": "awsm-tts",
+  "displayName": "Awsm TTS",
   "version": "0.0.1",
   "description": "Text-to-speech Chrome extension with proper noun support",
   "author": "Nicolas Keil",
