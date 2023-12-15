@@ -2,8 +2,10 @@ import { useRef, useState, type FormEventHandler } from "react";
 import { FaCheck, FaRegTrashAlt } from "react-icons/fa";
 import { FaCirclePlus } from "react-icons/fa6";
 
+import type { DictionaryWord } from "~/helpers/storage";
+
 interface Props {
-  words: string[];
+  words: DictionaryWord[];
   onAddWord: (word: string) => void;
   onDeleteWord: (i: number) => void;
   onUpdateWord: (i: number, newWord: string) => void;
@@ -39,7 +41,7 @@ export function Dictionary({
       <div className="flex flex-col p-1">
         {words?.map((entry, i) => (
           <div
-            key={entry}
+            key={entry.text}
             className="flex justify-between items-center gap-1 bg-white border border-gray-200 rounded-md px-1 pl-3 [&>button]:invisible [&:hover>button]:visible cursor-pointer"
             onClick={() => setFocusedWordIndex(i)}
           >
@@ -48,7 +50,7 @@ export function Dictionary({
                 <input
                   className="focus:outline-none"
                   ref={updateWordInput}
-                  defaultValue={entry}
+                  defaultValue={entry.text}
                   autoFocus
                 />
                 <button
@@ -62,7 +64,7 @@ export function Dictionary({
               </>
             ) : (
               <>
-                <div>{entry}</div>
+                <div>{entry.text}</div>
                 <button onClick={() => onDeleteWord(i)}>
                   <FaRegTrashAlt size={15} />
                 </button>

@@ -33,3 +33,21 @@ export const createWhisperTranscription = async (
   });
   return transcription;
 };
+
+export const getEmbedding = async (text: string, apiKey: string) => {
+  const embedding = await getOpenAI(apiKey).embeddings.create({
+    input: text,
+    model: "text-embedding-ada-002",
+  });
+  return embedding.data[0].embedding;
+};
+
+export const compareEmbeddings = (e1: number[], e2: number[]) => {
+  if (e1.length !== e2.length)
+    throw new Error("Embeddings are of different lengths!");
+  let result = 0;
+  for (let i = 0; i < e1.length; ++i) {
+    result += e1[i] * e2[i];
+  }
+  return result;
+};

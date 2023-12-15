@@ -1,6 +1,8 @@
 import { Storage } from "@plasmohq/storage";
 
-const storage = new Storage();
+const storage = new Storage({
+  area: "local",
+});
 
 const KEYS = {
   openAI: "OPENAI_API_KEY",
@@ -14,10 +16,15 @@ export const retrieveApiKey = () => {
   return storage.get(KEYS.openAI);
 };
 
-export const storeDictionary = async (value: string[]) => {
+export interface DictionaryWord {
+  text: string;
+  embedding: number[];
+}
+
+export const storeDictionary = async (value: DictionaryWord[]) => {
   await storage.set(KEYS.dictionary, JSON.stringify(value));
 };
-export const retrieveDictionary = async (): Promise<string[]> => {
+export const retrieveDictionary = async (): Promise<DictionaryWord[]> => {
   const dictionaryString = await storage.get(KEYS.dictionary);
   if (!dictionaryString) return [];
   return JSON.parse(dictionaryString);

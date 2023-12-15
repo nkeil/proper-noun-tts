@@ -8,16 +8,18 @@ import {
   retrieveDictionary,
   storeApiKey,
   storeDictionary,
+  type DictionaryWord,
 } from "~/helpers/storage";
 
 import { Dictionary } from "./components/Dictionary";
+import { getEmbedding } from "./helpers/gpt";
 
 function Options() {
   const [hasMicPermission, setHasMicPermission] = useState<boolean>();
-  const [hasApiKey, setHasApiKey] = useState<boolean>();
+  const [apiKey, setApiKey] = useState<string>();
   const [changeKeyOpen, setChangeKeyOpen] = useState(false);
   const apiKeyInput = useRef<HTMLInputElement>();
-  const [dictionary, setDictionary] = useState<string[]>();
+  const [dictionary, setDictionary] = useState<DictionaryWord[]>();
 
   const refreshMicPermission = async () => {
     setHasMicPermission(await getUserAudioPermission());
@@ -32,8 +34,9 @@ function Options() {
     setChangeKeyOpen(false);
   };
 
-  const onAddWord = (word: string) => {
-    const newDictionary = [...dictionary, word];
+  const onAddWord = async (word: string) => {
+    const embedding = await getEmbedding(word, apiKey);
+    const newDictionary = [...dictionary, { text: word, embedding }];
     setDictionary(newDictionary);
     storeDictionary(newDictionary);
   };
@@ -47,11 +50,12 @@ function Options() {
     storeDictionary(newDictionary);
   };
 
-  const onUpdateWord = (i: number, newWord: string) => {
+  const onUpdateWord = async (i: number, newWord: string) => {
     if (i < 0 || i >= dictionary.length)
       throw new Error("Tried to delete a nonexistent entry");
+    const newEmbedding = await getEmbedding(newWord, apiKey);
     const newDictionary = [...dictionary];
-    if (newWord) newDictionary[i] = newWord;
+    if (newWord) newDictionary[i] = { text: newWord, embedding: newEmbedding };
     else newDictionary.splice(i, 1);
     setDictionary(newDictionary);
     storeDictionary(newDictionary);
@@ -59,7 +63,7 @@ function Options() {
 
   useEffect(() => {
     refreshMicPermission();
-    retrieveApiKey().then((k) => setHasApiKey(!!k));
+    retrieveApiKey().then((k) => setApiKey(k ?? ""));
     retrieveDictionary().then((d) => setDictionary(d));
   }, []);
 
@@ -86,14 +90,14 @@ function Options() {
             🎤 Microphone Permission
           </div>
         )}
-        {hasApiKey ? (
+        {apiKey ? (
           <div
             className="bg-green-200 border-2 border-green-800 px-3 py-1 rounded-full text-green-950 cursor-pointer"
             onClick={() => setChangeKeyOpen((v) => !v)}
           >
             🔑 API Key
           </div>
-        ) : hasApiKey === undefined ? (
+        ) : apiKey === undefined ? (
           <div className="bg-gray-200 border-2 border-gray-800 px-3 py-1 rounded-full text-gray-950">
             🔑 API Key
           </div>
@@ -106,7 +110,7 @@ function Options() {
           </div>
         )}
       </div>
-      {(hasApiKey === false || changeKeyOpen) && (
+      {(apiKey === "" || changeKeyOpen) && (
         <form className="flex flex-col gap-3" onSubmit={onSubmitApiKey}>
           <h3>Please enter your OpenAI API key below:</h3>
           <input
@@ -126,7 +130,7 @@ function Options() {
       {hasMicPermission === false && (
         <div>Please enable your microphone permission!</div>
       )}
-      {hasApiKey && hasMicPermission && !changeKeyOpen && (
+      {apiKey && hasMicPermission && !changeKeyOpen && (
         <div>You're all set! Add some words to your dictionary below!</div>
       )}
       <Dictionary

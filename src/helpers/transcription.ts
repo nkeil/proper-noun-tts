@@ -1,5 +1,12 @@
-import { createWhisperTranscription, sendGPTPrompt } from "./gpt";
+import {
+  compareEmbeddings,
+  createWhisperTranscription,
+  getEmbedding,
+  sendGPTPrompt,
+} from "./gpt";
 import { retrieveDictionary } from "./storage";
+
+const MAX_NUM_RELEVANT_WORDS = 5;
 
 const example =
   `Input: ${JSON.stringify({
@@ -13,6 +20,20 @@ export const transcribeAudio = async (blob: Blob, apiKey: string) => {
   const transcription = await createWhisperTranscription(blob, apiKey);
   if (!transcription) return transcription;
 
+  const transcriptionEmbedding = await getEmbedding(transcription, apiKey);
+
+  const temp = dictionary
+    .map((word) => ({
+      text: word.text,
+      distance: compareEmbeddings(transcriptionEmbedding, word.embedding),
+    }))
+    .sort((w1, w2) => w2.distance - w1.distance);
+  console.log(temp);
+
+  const dictionaryEmbeddingComparisons = temp
+    .slice(0, MAX_NUM_RELEVANT_WORDS)
+    .map((word) => word.text);
+
   return await sendGPTPrompt({
     apiKey,
     messages: [
@@ -24,7 +45,7 @@ export const transcribeAudio = async (blob: Blob, apiKey: string) => {
         role: "user",
         content: JSON.stringify({
           transcription,
-          dictionary,
+          dictionary: dictionaryEmbeddingComparisons,
         }),
       },
     ],
