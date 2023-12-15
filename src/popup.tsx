@@ -45,6 +45,7 @@ function Popup() {
         transcribeAudio(blob, apiKey)
           .then((result) => {
             transcriptionInput.current.value = result;
+            setHasCopied(false);
           })
           .catch((e: APIError) => {
             console.log(JSON.stringify(e));
