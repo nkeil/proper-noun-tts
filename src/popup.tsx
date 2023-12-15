@@ -79,15 +79,15 @@ function Popup() {
 
   return (
     <div className="flex flex-col p-10 min-w-[300px] min-h-[400px] justify-between gap-5 items-center">
-      <h1 className="text-3xl font-rubik-doodle">Awesome TTS</h1>
+      <h1 className="text-3xl font-bold">Awesome TTS</h1>
       <button
         onClick={toggleMic}
-        className={`rounded-full border-2 h-20 w-20 ${
+        className={`rounded-full border-4 h-20 w-20 shadow-md active:translate-y-0.5 transition-all ${
           !hasMicPermission || !apiKey || isTranscribing
             ? "bg-gray-200 border-gray-300"
             : micOn
             ? "bg-green-400 border-green-900"
-            : "bg-red-400 border-red-900"
+            : "bg-red-400 border-red-600 hover:bg-[#F45B5B] active:bg-red-500 active:border-red-700"
         }`}
         disabled={isTranscribing}
       >

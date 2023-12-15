@@ -1,7 +1,7 @@
 import OpenAI, { toFile } from "openai";
 import type { ChatCompletionMessageParam } from "openai/resources";
 
-const dictionary = ["Joshie"];
+import { retrieveDictionary } from "./storage";
 
 const example =
   `Input: ${JSON.stringify({
@@ -11,6 +11,7 @@ const example =
 
 export const transcribeAudio = async (blob: Blob, apiKey: string) => {
   const openAI = new OpenAI({ apiKey, dangerouslyAllowBrowser: true });
+  const dictionary = await retrieveDictionary();
 
   const { text: transcription } = await openAI.audio.transcriptions.create({
     model: "whisper-1",

@@ -3,13 +3,21 @@ import { useEffect, useRef, useState } from "react";
 import "./style.css";
 
 import { getUserAudioPermission } from "~/helpers/audio";
-import { retrieveApiKey, storeApiKey } from "~/helpers/storage";
+import {
+  retrieveApiKey,
+  retrieveDictionary,
+  storeApiKey,
+  storeDictionary,
+} from "~/helpers/storage";
+
+import { Dictionary } from "./components/dictionary";
 
 function Options() {
   const [hasMicPermission, setHasMicPermission] = useState<boolean>();
   const [hasApiKey, setHasApiKey] = useState<boolean>();
   const [changeKeyOpen, setChangeKeyOpen] = useState(false);
   const apiKeyInput = useRef<HTMLInputElement>();
+  const [dictionary, setDictionary] = useState<string[]>();
 
   const refreshMicPermission = async () => {
     setHasMicPermission(await getUserAudioPermission());
@@ -24,9 +32,35 @@ function Options() {
     setChangeKeyOpen(false);
   };
 
+  const onAddWord = (word: string) => {
+    const newDictionary = [...dictionary, word];
+    setDictionary(newDictionary);
+    storeDictionary(newDictionary);
+  };
+
+  const onDeleteWord = (i: number) => {
+    if (i < 0 || i >= dictionary.length)
+      throw new Error("Tried to delete a nonexistent entry");
+    const newDictionary = [...dictionary];
+    newDictionary.splice(i, 1);
+    setDictionary(newDictionary);
+    storeDictionary(newDictionary);
+  };
+
+  const onUpdateWord = (i: number, newWord: string) => {
+    if (i < 0 || i >= dictionary.length)
+      throw new Error("Tried to delete a nonexistent entry");
+    const newDictionary = [...dictionary];
+    if (newWord) newDictionary[i] = newWord;
+    else newDictionary.splice(i, 1);
+    setDictionary(newDictionary);
+    storeDictionary(newDictionary);
+  };
+
   useEffect(() => {
     refreshMicPermission();
     retrieveApiKey().then((k) => setHasApiKey(!!k));
+    retrieveDictionary().then((d) => setDictionary(d));
   }, []);
 
   return (
@@ -93,8 +127,14 @@ function Options() {
         <div>Please enable your microphone permission!</div>
       )}
       {hasApiKey && hasMicPermission && !changeKeyOpen && (
-        <div>You're all set!</div>
+        <div>You're all set! Add some words to your dictionary below!</div>
       )}
+      <Dictionary
+        words={dictionary}
+        onAddWord={onAddWord}
+        onDeleteWord={onDeleteWord}
+        onUpdateWord={onUpdateWord}
+      />
     </div>
   );
 }
