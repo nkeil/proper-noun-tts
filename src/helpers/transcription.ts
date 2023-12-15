@@ -21,8 +21,8 @@ export const transcribeAudio = async (blob: Blob, apiKey: string) => {
 
   const messages: ChatCompletionMessageParam[] = [
     {
-      role: "assistant",
-      content: `You are given a transcription which may or may not be correct. Using the dictionary provided, provide a corrected transcript by updating ALL similar words to the value in the dictionary. Example:\n${example}`,
+      role: "system",
+      content: `You are correcting an automated transcript. You are given a transcription which may or may not be correct. Using the dictionary provided, provide a corrected transcript by updating ALL similar words to the value in the dictionary. Example:\n${example}`,
     },
     {
       role: "user",
@@ -36,7 +36,7 @@ export const transcribeAudio = async (blob: Blob, apiKey: string) => {
 
   const completion = await openAI.chat.completions.create({
     messages,
-    model: "gpt-3.5-turbo",
+    model: "gpt-4",
   });
 
   const correctedTranscription = completion.choices[0].message.content;
