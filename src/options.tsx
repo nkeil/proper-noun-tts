@@ -10,7 +10,7 @@ import {
   storeDictionary,
 } from "~/helpers/storage";
 
-import { Dictionary } from "./components/dictionary";
+import { Dictionary } from "./components/Dictionary";
 
 function Options() {
   const [hasMicPermission, setHasMicPermission] = useState<boolean>();

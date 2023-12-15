@@ -33,8 +33,6 @@ export function Dictionary({
     setFocusedWordIndex(null);
   };
 
-  console.log(words);
-
   return (
     <div className="bg-gray-100 border-2 border-gray-300 rounded-xl">
       <h3 className="text-2xl text-center">Dictionary</h3>

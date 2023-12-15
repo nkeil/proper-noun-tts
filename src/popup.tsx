@@ -4,9 +4,10 @@ import "./style.css";
 
 import copyToClipboard from "copy-to-clipboard";
 import type { APIError } from "openai/error";
-import { BsFillMicFill, BsFillMicMuteFill, BsThreeDots } from "react-icons/bs";
+import { BsFillMicFill, BsFillMicMuteFill } from "react-icons/bs";
 import { FaCheck, FaRegClipboard } from "react-icons/fa";
 
+import { Loading } from "./components/Loading";
 import {
   getUserAudioPermission,
   startRecording,
@@ -93,7 +94,7 @@ function Popup() {
       >
         <div className="mx-auto w-fit">
           {isTranscribing ? (
-            <BsThreeDots size={30} />
+            <Loading />
           ) : micOn ? (
             <BsFillMicFill size={30} />
           ) : (
