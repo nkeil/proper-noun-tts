@@ -1,9 +1,8 @@
-<img src="https://github.com/nkeil/proper-noun-tts/assets/26151586/03a5f80c-9c1e-400c-9422-c6ab80cbe576" width="150" style="text-color: white">
 <h1>
-  🎙️ Awsm TTS &middot; Nicolas Keil
+  🎙️ Smart TTS &middot; Nicolas Keil
 </h1>
 
-A text-to-speech Chrome extension with proper noun support!
+A text-to-speech Chrome extension with support for a proper noun dictionary!
 
 ## Instructions
 
